@@ -3,9 +3,9 @@
 #include "imports/lodepng.c" #ajust for your own lodepng location. use lodepng.h if you are compiling lodepng to separate object
 
 typedef struct{
-	unsigned int width, height;
-	unsigned char* data;
-}image;//always asumed to be 32bit RGBA format (always true if use load32 function)
+	uint32_t width, height;
+	uint8_t* data;
+}image;//always assumed to be 32bit RGBA format (always true if use load32 function)
 
 unsigned loadImage(image* img, const char* name);
 void freeImage(image* img);
@@ -55,7 +55,21 @@ uint32_t findMin(image* imgS, image* imgL){
 }
 
 uint32_t getScore(image* imgS, image* imgL, int offX, int offY){
-	return -1;
+	uint32_t score = 0;
+	uint8_t* SdataP = imgS->data;
+	uint8_t* LdataP = imgL->data;
+	LdataP += 4*(offX + (offY * imgL->width));
+	for(int j=0;j<imgS->height;j++){
+		for(int i=0;i<imgS->width;i++){
+			int r = (int)*(SdataP++)-(int)*(Ldata++);
+			int g = (int)*(SdataP++)-(int)*(Ldata++);
+			int b = (int)*(SdataP++)-(int)*(Ldata++);
+			Ldata++;Sdata++;//skipping alpha
+			score += (r*r)+(g*g)+(b*b);
+		}
+		SdataP += imgL->width - imgS->width;
+	}
+	return score;
 }
 
 unsigned loadImage(image* img, const char* name){
