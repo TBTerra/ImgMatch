@@ -6,3 +6,5 @@ Initially the target will be to get reliable matching. and then steps will be ta
 
 Requires:
 - LodePNG
+
+Is designed to work on windows. but I might make it cross platform in the future
