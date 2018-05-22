@@ -1,10 +1,9 @@
 #include <stdio.h>
-#include <stdint.h>
 #include "image.h"
 
-#define SKIP 8
+#define SKIP 1
 #define SAMPLE 4
-#define THRESHOLD 4000000
+#define THRESHOLD 0
 
 uint32_t findMin(image* imgS, image* imgL, point* where);
 uint32_t getScore(image* imgS, image* imgL, int offX, int offY);
