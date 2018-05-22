@@ -27,6 +27,9 @@ col getPixel(image* img, int x, int y){
 	out.b = img->data[3*((img->width*y)+x)+2];
 	return out;
 }
+int getPixelB(image* img, int x, int y){
+	return img->data[((img->width*y)+x)];
+}
 
 unsigned loadImage(image* img, const char* name){
 	unsigned err = lodepng_decode24_file(&(img->data), &(img->width), &(img->height), name);
@@ -117,13 +120,13 @@ int downsampleImageBW(image* img, imageB* imgBW, uint8_t scale){
 	return 1;
 }
 
-int isColor(image* img){
+int isColor(image* img){//is not perfect. some false positives as only a single pixel of color is needed
 	for(int j=0;j<img->height;j++){
 		for(int i=0;i<img->width;i++){
 			int r = img->data[3*((img->width*j)+i)];
 			int g = img->data[3*((img->width*j)+i)+1];
 			int b = img->data[3*((img->width*j)+i)+2];
-			if((((r-g)>50)||((r-g)<-50)) || (((b-g)>50)||((b-g)<-50)) || (((r-b)>50)||((r-b)<-50))){
+			if((((r-g)>25)||((r-g)<-25)) || (((b-g)>25)||((b-g)<-25)) || (((r-b)>25)||((r-b)<-25))){
 				return 1;
 			}
 		}

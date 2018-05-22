@@ -26,16 +26,12 @@ int main(int argc, char* argv[]){
 			downsampleImage(&img,scale);
 			sprintf(Cname,"dataC/%04d.png",i);
 			saveImage(&img, Cname);
-			freeImage(&img);
-		}else{
-			//downsampleImageBW(&img,&imgBW,scale);
-			downsampleImage(&img,scale);
-			sprintf(Cname,"dataB/%04d.png",i);
-			saveImage(&img, Cname);
-			//saveImageBW(&imgBW, Cname);
-			freeImage(&img);
-			//freeImage((image*)&imgBW);
 		}
+		downsampleImageBW(&img,&imgBW,scale);
+		sprintf(Cname,"dataB/%04d.png",i);
+		saveImageBW(&imgBW, Cname);
+		freeImage(&img);
+		freeImage((image*)&imgBW);
 	}
 	return 0;
 }
