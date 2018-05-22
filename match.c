@@ -2,8 +2,8 @@
 #include <stdint.h>
 #include "imports/lodepng.c" //ajust for your own lodepng location. use lodepng.h if you are compiling lodepng to separate object
 
-#define SKIP 1
-#define SAMPLE 1
+#define SKIP 4
+#define SAMPLE 4
 
 typedef struct{
 	uint32_t width, height;
@@ -48,9 +48,12 @@ int main(int argc, char* argv[]){
 		int bestI = -1;
 		int bestI2 = -1;
 		char Cname[100];
-		for(int i=1;i<=100;i++){
+		for(int i=1;i<=2497;i++){
+			printf("\r%04d",i);
 			sprintf(Cname,"data/%04d.png",i);
-			loadImage(&largeI, Cname);
+			if(loadImage(&largeI, Cname)){
+				continue;
+			}
 			uint32_t score = findMin(&smallI,&largeI,NULL);
 			if(score<best){
 				best2 = best;
