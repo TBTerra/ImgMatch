@@ -2,6 +2,9 @@
 #include <stdint.h>
 #include "imports/lodepng.c" //ajust for your own lodepng location. use lodepng.h if you are compiling lodepng to separate object
 
+#define SKIP 1
+#define SAMPLE 1
+
 typedef struct{
 	uint32_t width, height;
 	uint8_t* data;
@@ -81,8 +84,8 @@ uint32_t findMin(image* imgS, image* imgL, point* where){
 	}
 	uint32_t best = -1;
 	int bX=-1;int bY=-1;
-	for(int j=0;j<=scanH;j+=4){
-		for(int i=0;i<=scanW;i+=4){
+	for(int j=0;j<=scanH;j+=SKIP){
+		for(int i=0;i<=scanW;i+=SKIP){
 			int score = getScore(imgS, imgL, i,j);
 			if(score < best){
 				best = score;
@@ -99,8 +102,8 @@ uint32_t findMin(image* imgS, image* imgL, point* where){
 
 uint32_t getScore(image* imgS, image* imgL, int offX, int offY){
 	uint32_t score = 0;
-	for(int j=0;j<imgS->height;j+=8){
-		for(int i=0;i<imgS->width;i+=8){
+	for(int j=0;j<imgS->height;j+=SAMPLE){
+		for(int i=0;i<imgS->width;i+=SAMPLE){
 			col S = getPixel(imgS, i, j);
 			col L = getPixel(imgL, i+offX, j+offY);
 			score += difPixel(S,L);
