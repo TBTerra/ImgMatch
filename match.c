@@ -1,37 +1,19 @@
 #include <stdio.h>
 #include <stdint.h>
-#include "imports/lodepng.c" //ajust for your own lodepng location. use lodepng.h if you are compiling lodepng to separate object
+#include "image.h"
 
-#define SKIP 4
+#define SKIP 8
 #define SAMPLE 4
+#define THRESHOLD 4000000
 
-typedef struct{
-	uint32_t width, height;
-	uint8_t* data;
-}image;//always assumed to be 24bit RGB format (always true if use load24 function)
-
-typedef struct{
-	uint8_t r,g,b;
-}col;
-typedef struct{
-	int x,y;
-}point;
-
-unsigned loadImage(image* img, const char* name);
-void freeImage(image* img);
 uint32_t findMin(image* imgS, image* imgL, point* where);
 uint32_t getScore(image* imgS, image* imgL, int offX, int offY);
-col getPixel(image* img, int x, int y);
 uint32_t difPixel(col A, col B);
 
 //there should be 2 arguments (for now)
 //1st argument: the file with a section of image
 //2nd argument: the file of the full image to test against
 //in future if the 2nd argument is missing then it will match against all files in the data dir
-
-void printCol(col A){
-	printf("[%d,%d,%d]",A.r,A.g,A.b);
-}
 
 int main(int argc, char* argv[]){
 	if(argc < 2){
@@ -62,6 +44,10 @@ int main(int argc, char* argv[]){
 				bestI = i;
 			}
 			freeImage(&largeI);
+			if(best<THRESHOLD){
+				printf("early exit\n");
+				break;
+			}
 		}
 		printf("best match was %d with a score of %u\nNext best was %d with a score of %u",bestI,best,bestI2,best2);
 	}else{
@@ -116,27 +102,9 @@ uint32_t getScore(image* imgS, image* imgL, int offX, int offY){
 	return score;
 }
 
-col getPixel(image* img, int x, int y){
-	col out;
-	out.r = img->data[3*((img->width*y)+x)];
-	out.g = img->data[3*((img->width*y)+x)+1];
-	out.b = img->data[3*((img->width*y)+x)+2];
-	return out;
-}
-
 uint32_t difPixel(col A, col B){
 	int r = (int)A.r-(int)B.r;
 	int g = (int)A.g-(int)B.g;
 	int b = (int)A.b-(int)B.b;
 	return (r*r)+(g*g)+(b*b);
-}
-
-unsigned loadImage(image* img, const char* name){
-	unsigned err = lodepng_decode24_file(&(img->data), &(img->width), &(img->height), name);
-	//printf("loaded image of size %dx%d\n",img->width,img->height);
-	return err;
-}
-void freeImage(image* img){
-	img->width=img->height=0;
-	free(img->data);
 }
