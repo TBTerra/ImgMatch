@@ -1,0 +1,1 @@
+#include "imports/lodepng.c" #ajust for your own lodepng location. use lodepng.h if you are compiling lodepng to separate object
