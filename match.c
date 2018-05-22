@@ -39,6 +39,10 @@ uint32_t findMin(image* imgS, image* imgL){
 		printf("cant work if small image is larger than large image")
 		return -1;
 	}
+	if((imgS->width*imgS->height)>21800){
+		printf("cant guarantee this is gonna work. image too large, may cause int overflow")
+		return -1
+	}
 	uint32_t best = -1;
 	for(int i=0;i<scanH;i++){
 		for(int j=0;j<scanW;j++){
