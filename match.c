@@ -10,10 +10,13 @@ typedef struct{
 typedef struct{
 	uint8_t r,g,b;
 }col;
+typedef struct{
+	int x,y;
+}point;
 
 unsigned loadImage(image* img, const char* name);
 void freeImage(image* img);
-uint32_t findMin(image* imgS, image* imgL);
+uint32_t findMin(image* imgS, image* imgL, point* where);
 uint32_t getScore(image* imgS, image* imgL, int offX, int offY);
 col getPixel(image* img, int x, int y);
 uint32_t difPixel(col A, col B);
@@ -28,22 +31,44 @@ void printCol(col A){
 }
 
 int main(int argc, char* argv[]){
-	if(argc < 3){
-		printf("usage: match <small img> <images to match against>");
+	if(argc < 2){
+		printf("usage: match <small img> [image to match against]");
 		return -1;
 	}
 	
 	image smallI;
 	image largeI;
 	loadImage(&smallI, argv[1]);
-	loadImage(&largeI, argv[2]);
-	uint32_t best = findMin(&smallI,&largeI);
-	printf("best score was %u",best);
+	if(argc == 2){
+		uint32_t best = -1;
+		uint32_t best2 = -1;
+		int bestI = -1;
+		int bestI2 = -1;
+		char Cname[100];
+		for(int i=1;i<=100;i++){
+			sprintf(Cname,"data/%04d.png",i);
+			loadImage(&largeI, Cname);
+			uint32_t score = findMin(&smallI,&largeI,NULL);
+			if(score<best){
+				best2 = best;
+				bestI2 = bestI;
+				best = score;
+				bestI = i;
+			}
+			freeImage(&largeI);
+		}
+		printf("best match was %d with a score of %u\nNext best was %d with a score of %u",bestI,best,bestI2,best2);
+	}else{
+		loadImage(&largeI, argv[2]);
+		point where;
+		uint32_t best = findMin(&smallI,&largeI, &where);
+		printf("best score was %u at [%d,%d]",best,where.x,where.y);
+	}
 	
 	return 0;
 }
 
-uint32_t findMin(image* imgS, image* imgL){
+uint32_t findMin(image* imgS, image* imgL, point* where){
 	int32_t scanW = imgL->width - imgS->width;
 	int32_t scanH = imgL->height - imgS->height;
 	if((scanW <= 0) || (scanH <= 0)){
@@ -56,8 +81,8 @@ uint32_t findMin(image* imgS, image* imgL){
 	}
 	uint32_t best = -1;
 	int bX=-1;int bY=-1;
-	for(int j=0;j<=scanH;j++){
-		for(int i=0;i<=scanW;i++){
+	for(int j=0;j<=scanH;j+=4){
+		for(int i=0;i<=scanW;i+=4){
 			int score = getScore(imgS, imgL, i,j);
 			if(score < best){
 				best = score;
@@ -65,14 +90,17 @@ uint32_t findMin(image* imgS, image* imgL){
 			}
 		}
 	}
-	printf("at [%d,%d]",bX,bY);
+	if(where!=NULL){
+		where->x = bX;
+		where->y = bY;
+	}
 	return best;
 }
 
 uint32_t getScore(image* imgS, image* imgL, int offX, int offY){
 	uint32_t score = 0;
-	for(int j=0;j<imgS->height;j++){
-		for(int i=0;i<imgS->width;i++){
+	for(int j=0;j<imgS->height;j+=8){
+		for(int i=0;i<imgS->width;i+=8){
 			col S = getPixel(imgS, i, j);
 			col L = getPixel(imgL, i+offX, j+offY);
 			score += difPixel(S,L);
@@ -99,7 +127,7 @@ uint32_t difPixel(col A, col B){
 
 unsigned loadImage(image* img, const char* name){
 	unsigned err = lodepng_decode24_file(&(img->data), &(img->width), &(img->height), name);
-	printf("loaded image of size %dx%d\n",img->width,img->height);
+	//printf("loaded image of size %dx%d\n",img->width,img->height);
 	return err;
 }
 void freeImage(image* img){
