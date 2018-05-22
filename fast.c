@@ -17,7 +17,7 @@ int main(){
 	int bestI2 = -1;
 	char Cname[100];
 	if(isColor(&smallI)){
-		downsampleImage(&smallI, 8);
+		downsampleImage(&smallI, 4);
 		for(int i=1;i<=2497;i++){
 			printf("\r%04d",i);
 			sprintf(Cname,"dataC/%04d.png",i);
@@ -34,7 +34,7 @@ int main(){
 			freeImage(&largeI);
 		}
 	}else{
-		downsampleImageBW(&smallI, (imageB*)&smallI, 8);
+		downsampleImageBW(&smallI, (imageB*)&smallI, 4);
 		for(int i=1;i<=2497;i++){
 			printf("\r%04d",i);
 			sprintf(Cname,"dataB/%04d.png",i);

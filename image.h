@@ -93,7 +93,7 @@ int downsampleImage(image* img, uint8_t scale){
 }
 
 int downsampleImageBW(image* img, imageB* imgBW, uint8_t scale){
-	if(scale<=1)return 0;
+	if(scale<1)return 0;
 	int newW = img->width/scale;
 	int newH = img->height/scale;
 	if((newW==0) || (newH==0))return 0;
@@ -106,7 +106,7 @@ int downsampleImageBW(image* img, imageB* imgBW, uint8_t scale){
 			//loop though old pixels
 			for(int l=0;l<scale;l++){
 				for(int k=0;k<scale;k++){
-					total += img->data[3*((img->width*(j*scale+l))+(i*scale+k))];
+					total += (img->data[3*((img->width*(j*scale+l))+(i*scale+k))]+img->data[3*((img->width*(j*scale+l))+(i*scale+k))+1]+img->data[3*((img->width*(j*scale+l))+(i*scale+k))+2])/3;
 				}
 			}
 			//set new pixel
