@@ -51,7 +51,7 @@ int main(){
 		}
 	}
 	int stop = clock();
-	printf("best match was %d with a score of %u\nNext best was %d with a score of %u\n",bestI,best,bestI2,best2);
+	printf("best match was %d with a score of %u vs %u\n",bestI,best/1000,best2/1000);
 	printf("took %d ms to do\n",stop-start);
 	return 0;
 }
