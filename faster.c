@@ -3,6 +3,8 @@
 #include <time.h>
 #include "image.h"
 
+#define SCALE 8
+
 uint32_t findMin(image* imgS, image* imgL, point* where);
 uint32_t getScore(image* imgS, image* imgL, int offX, int offY);
 uint32_t findMinB(image* imgS, image* imgL, point* where);
@@ -19,9 +21,11 @@ int main(){
 	uint32_t best2 = -1;
 	int bestI = -1;
 	int bestI2 = -1;
+	char temp[100];
 	if(isColor(&smallI)){
-		downsampleImage(&smallI, 8);
-		FILE* f = fopen("8C.dat","rb");
+		downsampleImage(&smallI, SCALE);
+		sprintf(temp,"%dC.dat",SCALE);
+		FILE* f = fopen(temp,"rb");
 		setvbuf(f, NULL, _IOFBF, 1000000);
 		uint32_t num;
 		while(num = nextImg(&largeI, f, 3)){
@@ -35,8 +39,9 @@ int main(){
 			freeImage(&largeI);
 		}
 	}else{
-		downsampleImageBW(&smallI, (imageB*)&smallI, 8);
-		FILE* f = fopen("8B.dat","rb");
+		downsampleImageBW(&smallI, (imageB*)&smallI, SCALE);
+		sprintf(temp,"%dB.dat",SCALE);
+		FILE* f = fopen(temp,"rb");
 		setvbuf(f, NULL, _IOFBF, 1000000);
 		uint32_t num;
 		while(num = nextImg(&largeI, f, 1)){
