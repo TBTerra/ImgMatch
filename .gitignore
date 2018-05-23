@@ -1,5 +1,6 @@
 *.exe
 *.o
 *.png
+*.dat
+*.ahk
 imports/*.*
-data/*.*
